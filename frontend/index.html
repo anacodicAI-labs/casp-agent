@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carbon-Aware Supply Chain Optimization | System-of-Systems Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Light theme from supply_chain.webp: peachy-pink, cream, warm yellows/orange, light blue, red accent, dark text */
+      --bg: #fdf6f0;
+      --bg-card: #ffffff;
+      --bg-elevated: #fefcf9;
+      --text: #1a1a1a;
+      --text-muted: #5c534a;
+      --primary: #c41e3a;
+      --primary-dim: #a01830;
+      --primary-light: #fce8eb;
+      --accent: #e67e22;
+      --accent-dim: #d35400;
+      --accent-blue: #5d9cec;
+      --warning: #d4a017;
+      --danger: #c41e3a;
+      --border: #e8ddd4;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+      color: var(--text);
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('/static/supply_chain.webp') center center / cover no-repeat;
+      filter: blur(6px) brightness(0.97) saturate(0.85);
+      z-index: -2;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(253, 246, 240, 0.75) 0%, rgba(254, 252, 249, 0.82) 40%, rgba(253, 248, 242, 0.78) 100%);
+      z-index: -1;
+    }
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      position: relative;
+      z-index: 0;
+    }
+
+    /* Hero & value proposition */
+    .hero {
+      text-align: center;
+      padding: 2rem 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .hero-img-wrap {
+      margin: 0 auto 1.25rem;
+      max-width: 380px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      background: var(--bg-card);
+    }
+    .hero-img-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 140px;
+      object-fit: contain;
+      object-position: center;
+    }
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .hero .tagline {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 0.75rem;
+    }
+    .sample-prompts {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .sample-chip {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .sample-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent-dim);
+      background: #fff8f0;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 1rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+    .card h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.75rem 0; color: var(--text); }
+
+    /* Input section */
+    .input-section label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.5rem; }
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      padding: 0.875rem 1rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      resize: vertical;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.2); }
+    textarea::placeholder { color: var(--text-muted); opacity: 0.8; }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 0.75rem;
+    }
+    .row:last-child { border-bottom: none; }
+    .row label { margin: 0; min-width: 120px; font-weight: 500; font-size: 0.875rem; color: var(--text-muted); }
+    .row .value, .row .value-display { color: var(--text); font-size: 0.9rem; }
+    .row input, .row select {
+      flex: 1;
+      max-width: 200px;
+      margin-left: auto;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.875rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .row select { cursor: pointer; }
+    .btn-edit {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.8rem;
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-left: 0.5rem;
+      cursor: pointer;
+    }
+    .btn-edit:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+    button {
+      padding: 0.6rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      border: none;
+      transition: background 0.15s, transform 0.05s;
+    }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    button.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    button.primary:hover:not(:disabled) { background: var(--primary-dim); }
+    button.secondary {
+      background: var(--bg-elevated);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    button.secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-dim); }
+    button.danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--border);
+    }
+    button.danger:hover:not(:disabled) { background: var(--primary-light); border-color: var(--danger); }
+    .actions { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+    .error { color: var(--danger); font-size: 0.875rem; margin-top: 0.5rem; }
+    /* Shipment summary bar */
+    .shipment-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+    .shipment-bar span { color: var(--text-muted); }
+    .shipment-bar strong { color: var(--text); font-weight: 500; }
+
+    /* Figure 2-style architecture layout */
+    .module-row-wrap {
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin: 0 -0.25rem;
+    }
+    .module-row-wrap::-webkit-scrollbar { height: 6px; }
+    .module-row-wrap::-webkit-scrollbar-track { background: var(--bg); border-radius: 3px; }
+    .module-row-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .module-grid {
+      min-width: 920px;
+      padding: 0.25rem;
+    }
+    .arch-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0.85rem;
+      margin-bottom: 0.65rem;
+    }
+    .arch-row.tools {
+      align-items: flex-start;
+      margin-top: -0.15rem;
+    }
+    .arch-divider {
+      margin: 0.7rem 0 0.8rem;
+      text-align: center;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-top: 1px dashed var(--border);
+      padding-top: 0.55rem;
+    }
+    .arch-connector {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: -0.05rem 0 0.35rem;
+      letter-spacing: 0.06em;
+    }
+    .arch-connector.split {
+      font-size: 1rem;
+      margin: -0.15rem 0 0.25rem;
+    }
+    .agent-column {
+      flex: 0 0 270px;
+      max-width: 270px;
+    }
+    .agent-column-title {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0.1rem 0 0.35rem;
+    }
+    .inner-tools {
+      display: flex;
+      justify-content: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .inner-tool {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      padding: 0.18rem 0.55rem;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .inner-tool[data-state="running"] {
+      border-color: var(--warning);
+      color: #8b640f;
+      background: rgba(212, 160, 23, 0.08);
+    }
+    .inner-tool[data-state="complete"] {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(252, 232, 235, 0.45);
+    }
+    .post-row {
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .post-arrow {
+      align-self: center;
+      color: var(--text-muted);
+      margin: 0 0.1rem;
+      font-size: 0.9rem;
+    }
+    .post-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      min-width: 170px;
+    }
+    .module-card {
+      flex: 0 0 160px;
+      min-width: 160px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.875rem 1rem;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+    }
+    .module-card .module-title { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem; }
+    .module-card .module-name { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; line-height: 1.3; }
+    .module-card .module-status {
+      font-size: 0.75rem;
+      margin-top: auto;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .module-card .module-metric { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; font-family: var(--font-mono); }
+    .module-card .module-metric strong { color: var(--text); }
+    .module-card[data-status="idle"] .module-status { color: var(--text-muted); }
+    .module-card[data-status="running"] .module-status { color: var(--warning); }
+    .module-card[data-status="running"] { border-color: var(--warning); box-shadow: 0 0 0 1px rgba(210, 153, 34, 0.2); }
+    .module-card[data-status="complete"] .module-status { color: var(--primary); }
+    .module-card[data-status="complete"] { border-color: var(--primary); background: rgba(252, 232, 235, 0.4); }
+    .module-card[data-status="error"] .module-status { color: var(--danger); }
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Results panel */
+    .results-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 768px) { .results-panel { grid-template-columns: 1fr; } }
+    .results-main {
+      background: linear-gradient(135deg, rgba(196, 30, 58, 0.06) 0%, rgba(254, 252, 249, 0.9) 50%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+    }
+    .results-main .rec { font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem; }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-row .label { color: var(--text-muted); }
+    .metric-row .value { font-weight: 500; color: var(--text); font-family: var(--font-mono); }
+    .metric-row.highlight .value { color: var(--primary); }
+    .results-detail .metric-row { padding: 0.4rem 0; font-size: 0.85rem; }
+    .warning-box {
+      background: rgba(212, 160, 23, 0.12);
+      border: 1px solid var(--warning);
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+    }
+    .governance-list { font-size: 0.85rem; color: var(--text-muted); margin: 0; padding-left: 1.25rem; }
+    .governance-list li { margin-bottom: 0.35rem; }
+
+    /* Technical section */
+    .tech-section {
+      margin-top: 1rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .tech-toggle {
+      background: none;
+      border: none;
+      color: var(--accent-dim);
+      font-size: 0.875rem;
+      cursor: pointer;
+      padding: 0.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tech-toggle:hover { text-decoration: underline; }
+    .tech-content {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .tech-content .formula { color: var(--accent-dim); margin: 0.5rem 0; }
+    .tech-content ul { margin: 0.5rem 0; padding-left: 1.25rem; }
+
+    .loading { opacity: 0.7; pointer-events: none; }
+    .we-assumed-title { font-size: 0.8rem; color: var(--text-muted); margin: 0.75rem 0 0.5rem 0; }
+
+    /* Agent cards — briefing lines + skeleton */
+    .module-brief-lines { flex: 1; margin-top: 0.35rem; min-height: 3.2rem; font-size: 0.72rem; line-height: 1.35; color: var(--text); }
+    .module-brief-line { word-break: break-word; }
+    .module-skeleton { font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 3px; margin-top: 0.5rem; }
+    .llm-pill {
+      display: inline-block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 0.12rem 0.35rem; border-radius: 4px; background: rgba(230, 126, 34, 0.15); color: var(--accent-dim); margin-bottom: 0.25rem;
+    }
+
+    /* Review strip (human gate before optimize) */
+    .review-strip { background: linear-gradient(135deg, rgba(93, 156, 236, 0.08) 0%, var(--bg-card) 100%); border-color: var(--accent-blue); }
+    .review-strip h2 { text-transform: none; letter-spacing: 0; font-size: 1rem; color: var(--text); }
+    .review-summary { font-size: 0.9rem; color: var(--text); line-height: 1.45; margin-bottom: 0.75rem; }
+    .review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; justify-content: space-between; }
+    .review-countdown { font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+    .review-countdown .spinner { margin-right: 0; }
+
+    /* Accordion editor */
+    .accordion-toggle {
+      width: 100%; text-align: left; background: var(--bg-elevated); border: 1px solid var(--border);
+      color: var(--accent-dim); padding: 0.65rem 1rem; border-radius: var(--radius-sm); font-size: 0.9rem;
+      cursor: pointer; margin-bottom: 0.75rem;
+    }
+    .accordion-toggle:hover { border-color: var(--accent); }
+    .accordion-body { display: none; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.25rem; }
+    .accordion-body.is-open { display: block; }
+
+    /* Results hero (Act 3) */
+    .results-hero {
+      background: linear-gradient(135deg, rgba(196, 30, 58, 0.08) 0%, var(--bg-elevated) 100%);
+      border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+    }
+    .results-hero .star { color: var(--warning); font-size: 1.1rem; margin-right: 0.35rem; }
+    .results-hero h3 { margin: 0 0 0.75rem 0; font-size: 1.2rem; color: var(--text); }
+    .results-hero-metrics { display: flex; flex-wrap: wrap; gap: 1.25rem; font-size: 0.95rem; margin-bottom: 0.75rem; }
+    .results-hero-metrics strong { color: var(--text); font-weight: 600; }
+    .results-hero-synth { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; border-left: 3px solid var(--primary); padding-left: 0.75rem; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero-img-wrap">
+        <img src="/static/supply_chain.webp" alt="Supply chain flow" />
+      </div>
+      <h1>Operational Resilience Under Carbon Constraints</h1>
+      <p class="tagline">System-of-systems supply chain optimization: carbon–service–cost trade-offs, governance levers, and early-warning indicators for high-stakes logistics.</p>
+    </header>
+
+    <section id="step-query" class="card input-section">
+      <h2>Describe your shipment</h2>
+      <label for="query">Natural language query</label>
+      <textarea id="query" placeholder="e.g. Ship insulin from Mumbai to Delhi, 150 km, pharmacy — or: fashion delivery Bangalore to Chennai, 300 km"></textarea>
+      <div class="sample-prompts" id="sample-prompts">
+        <button type="button" class="sample-chip" data-sample="Urgent pharmacy shipment Delhi to Mumbai, 5kg, express">Urgent pharmacy shipment Delhi to Mumbai, 5kg, express</button>
+        <button type="button" class="sample-chip" data-sample="Grocery delivery Bangalore to Chennai, 15kg, same day">Grocery delivery Bangalore to Chennai, 15kg, same day</button>
+        <button type="button" class="sample-chip" data-sample="Furniture shipment Lucknow to Mumbai, 40kg, standard">Furniture shipment Lucknow to Mumbai, 40kg, standard</button>
+        <button type="button" class="sample-chip" data-sample="Electronics shipment Pune to Hyderabad, 12kg, two day">Electronics shipment Pune to Hyderabad, 12kg, two day</button>
+        <button type="button" class="sample-chip" data-sample="Fragile items from Jaipur to Ahmedabad, 8kg, express">Fragile items from Jaipur to Ahmedabad, 8kg, express</button>
+        <button type="button" class="sample-chip" data-sample="Documents courier Kolkata to Delhi, 1kg, same day">Documents courier Kolkata to Delhi, 1kg, same day</button>
+      </div>
+      <div class="actions">
+        <button id="btn-extract" class="primary">Analyze ▶</button>
+      </div>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin:0.5rem 0 0 0;">Agents read your request, gather risk and carrier options, then optimize — edit before the short countdown if something looks off.</p>
+      <div id="extract-error" class="error"></div>
+    </section>
+
+    <section id="dashboard-section" class="card" style="display:none;">
+      <h2>Control tower — Figure 2 architecture view</h2>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin:-0.5rem 0 1rem 0;">Top: orchestrator. Middle: risk and sourcing agents with weather/news/web and distance/carriers/web signals. Then optimization, carbon & governance, and synthesis.</p>
+      <div class="module-row-wrap">
+        <div class="module-grid" id="module-grid"></div>
+      </div>
+    </section>
+
+    <section id="review-strip" class="card review-strip" style="display:none;">
+      <h2>Agent briefing — does this look right?</h2>
+      <div id="review-summary" class="review-summary">—</div>
+      <div class="review-actions">
+        <button type="button" id="btn-edit-details" class="secondary">Edit details</button>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <div id="review-countdown" class="review-countdown"><span class="spinner"></span> <span id="review-countdown-text">Optimizing in 3s…</span></div>
+          <button type="button" id="btn-run-now" class="primary" style="padding:0.4rem 1rem;font-size:0.9rem;">Run now ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="step-results" class="card" style="display:none;">
+      <h2>Your answer</h2>
+      <div id="results-hero" class="results-hero"></div>
+      <div class="results-panel">
+        <div class="results-main">
+          <h3 style="font-size:0.85rem;text-transform:uppercase;color:var(--text-muted);margin:0 0 0.5rem 0;">Details</h3>
+          <div class="rec" id="rec-name" style="display:none;">—</div>
+          <div id="results-metrics"></div>
+          <div id="results-warning" class="warning-box" style="display:none;"></div>
+        </div>
+        <div class="results-detail">
+          <h3>Business impact</h3>
+          <div id="results-business"></div>
+          <h3 style="margin-top:1rem;">Early-warning indicators (Desk 07)</h3>
+          <div id="results-early-warning"></div>
+          <h3 style="margin-top:1rem;">Governance</h3>
+          <ul class="governance-list" id="results-governance"></ul>
+          <h3 style="margin-top:1rem;">Expert desk packets</h3>
+          <div id="results-experts"></div>
+          <div class="tech-section">
+            <button type="button" class="tech-toggle" id="tech-toggle">▼ Technical details (CASP, desks, data)</button>
+            <div class="tech-content" id="tech-content" style="display:none;">
+              <p><strong>CASP</strong> = Service Performance / Total Carbon (transport + cold-chain + AI compute). Portfolio CASP = weighted harmonic mean across categories.</p>
+              <p class="formula">Total Carbon = transport_gCO₂ + cold_chain_overhead + AI_compute (~50 gCO₂/optimization)</p>
+              <p><strong>Expert desks:</strong></p>
+              <ul>
+                <li>Supervisor Intake — parse requirements and coordinate desks</li>
+                <li>Operations Risk Desk — weather/news/web signals + risk and buffer recommendation</li>
+                <li>Carrier Procurement Desk — shortlist options + market/dataset benchmark</li>
+                <li>Pricing &amp; Planning Desk — baseline run then constrained rerun with deltas</li>
+                <li>Sustainability &amp; Policy Desk — carbon and governance scenarios</li>
+                <li>Supervisor Synthesis — final recommendation with fallback notes</li>
+              </ul>
+              <p>Data: Delivery_Logistics.csv (25K records, 9 package types, 9 partners). Stakes: critical 99%, high-value 95%, standard 85% on-time targets.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="impact-line" class="card" style="margin-top:1rem; background:var(--bg-elevated); border-color:var(--border); display:none;"></div>
+      <div class="actions" style="margin-top:1.25rem;">
+        <button type="button" id="btn-accordion-from-results" class="secondary">▼ Edit what agents found &amp; re-run</button>
+        <button type="button" id="btn-export" class="secondary">Copy summary</button>
+        <button type="button" id="btn-start-over2" class="danger">Start over</button>
+      </div>
+    </section>
+
+    <section id="step-editor" class="card" style="display:none;">
+      <button type="button" id="accordion-toggle" class="accordion-toggle" aria-expanded="false">▼ Edit what agents found &amp; re-run</button>
+      <div id="accordion-body" class="accordion-body">
+        <h2>Shipment &amp; agent context</h2>
+        <div class="shipment-bar" id="shipment-bar"></div>
+        <p class="we-assumed-title">Shipment fields (click Edit to change)</p>
+        <div id="we-assumed"></div>
+        <p class="we-assumed-title" style="margin-top:1rem;">Risk context (from agents)</p>
+        <div id="risk-gathered"></div>
+        <p class="we-assumed-title" style="margin-top:1rem;">Carrier shortlist (from agents)</p>
+        <div id="carriers-gathered"></div>
+        <div class="actions">
+          <button type="button" id="btn-rerun-optimize" class="primary">Re-run optimization</button>
+          <button type="button" id="btn-regather" class="secondary">Re-analyze (new gather)</button>
+          <button type="button" id="btn-start-over" class="danger">Start over</button>
+        </div>
+        <div id="optimize-error" class="error"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API = '';
+    let features = null;
+    let defaultsUsed = [];
+    let gatheredRisk = {};
+    let gatheredCarriers = [];
+    let gatheredBenchmark = null;
+    let gatheredRecommendation = null;
+    let gatheredBenchmarkReasoning = null;
+    let gatheredLlmStatus = { risk: 'unavailable', sourcing: 'unavailable' };
+    /** query | working | review | editing | optimizing | results */
+    let uiPhase = 'query';
+    let optimizeCountdownTimer = null;
+    const COUNTDOWN_SECONDS = 3;
+    /** Last timeline state for re-rendering card briefs after partial_context */
+    let lastAgentGridStatus = null;
+    let lastAgentGridMetrics = null;
+    /** Filled during optimize-phase animation / final cards 04–07 */
+    let optimizePhaseBriefs = {};
+    let subtoolStatus = {
+      'risk.weather': 'idle',
+      'risk.news': 'idle',
+      'risk.web': 'idle',
+      'sourcing.distance': 'idle',
+      'sourcing.carriers': 'idle',
+      'sourcing.web': 'idle',
+    };
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    const EDITABLE_KEYS = [
+      'origin', 'destination',
+      'package_type', 'package_weight_kg',
+      'delivery_mode', 'distance_km',
+      'weather_origin', 'weather_destination',
+      'delivery_partner', 'vehicle_type', 'region',
+    ];
+
+    const FIELD_LABELS = {
+      package_type: 'Package type',
+      distance_km: 'Distance (km)',
+      package_weight_kg: 'Weight (kg)',
+      origin: 'Origin',
+      destination: 'Destination',
+      delivery_mode: 'Speed',
+      delivery_partner: 'Partner',
+      vehicle_type: 'Vehicle',
+      weather_condition: 'Weather',
+      weather_origin: 'Weather Origin',
+      weather_destination: 'Weather Destination',
+      region: 'Region',
+    };
+    const OPTIONS = {
+      package_type: ['pharmacy', 'clothing', 'electronics', 'groceries', 'automobile parts', 'fragile items', 'documents', 'furniture', 'cosmetics'],
+      delivery_mode: ['same day', 'express', 'two day', 'standard'],
+      delivery_partner: ['delhivery', 'dhl', 'blue dart', 'shadowfax', 'xpressbees', 'ecom express', 'ekart', 'dtdc', 'gati', 'fedex'],
+      vehicle_type: ['bike', 'ev bike', 'scooter', 'ev van', 'van', 'truck'],
+      weather_condition: ['clear', 'cold', 'rainy', 'foggy', 'hot', 'stormy'],
+      weather_origin: ['clear', 'cold', 'rainy', 'foggy', 'hot', 'stormy'],
+      weather_destination: ['clear', 'cold', 'rainy', 'foggy', 'hot', 'stormy'],
+      region: ['west', 'central', 'east', 'north', 'south'],
+    };
+
+    const MODULES = [
+      { id: 'm01', num: '01', name: 'Orchestrator', role: 'llm', desc: 'Intake & sequencing', short: 'Orchestr.' },
+      { id: 'm02', num: '02', name: 'Risk Agent', role: 'llm', desc: 'Signals & buffer', short: 'Risk' },
+      { id: 'm03', num: '03', name: 'Sourcing Agent', role: 'llm', desc: 'Carriers & benchmark', short: 'Sourcing' },
+      { id: 'm04', num: '04', name: 'Optimization', role: 'tool', desc: 'Pareto routing', short: 'Optimization' },
+      { id: 'm05', num: '05', name: 'Carbon & Governance', role: 'tool', desc: 'Emissions & policy', short: 'Carbon' },
+      { id: 'm06', num: '06', name: 'Synthesis', role: 'llm', desc: 'Final answer', short: 'Synthesis' },
+    ];
+    const TOOL_TO_CARD = {
+      extract_features_tool: 'm01',
+      risk_agent_tool: 'm02',
+      sourcing_agent_tool: 'm03',
+      run_optimization_tool: 'm04',
+      carbon_analysis_tool: 'm05',
+    };
+
+    function showLayout() {
+      document.getElementById('step-query').style.display = 'block';
+      document.getElementById('dashboard-section').style.display = (uiPhase === 'query') ? 'none' : 'block';
+      document.getElementById('review-strip').style.display = (uiPhase === 'review') ? 'block' : 'none';
+      document.getElementById('step-results').style.display = (uiPhase === 'results') ? 'block' : 'none';
+      const editor = document.getElementById('step-editor');
+      editor.style.display = (uiPhase === 'editing' || uiPhase === 'results') ? 'block' : 'none';
+    }
+
+    function cancelOptimizeCountdown() {
+      if (optimizeCountdownTimer) {
+        clearInterval(optimizeCountdownTimer);
+        optimizeCountdownTimer = null;
+      }
+    }
+
+    function setAccordionOpen(open) {
+      const body = document.getElementById('accordion-body');
+      const btn = document.getElementById('accordion-toggle');
+      if (!body || !btn) return;
+      body.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.textContent = open ? '▲ Hide shipment & agent details' : '▼ Edit what agents found & re-run';
+      if (open) {
+        renderEditorForm();
+        body.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function renderReviewSummary() {
+      const el = document.getElementById('review-summary');
+      if (!el) return;
+      const pkg = features && features.package_type ? escapeHtml(String(features.package_type)) : '—';
+      const route = features && (features.origin || features.destination)
+        ? escapeHtml(`${features.origin || '?'} → ${features.destination || '?'}`) : '—';
+      const dist = features && features.distance_km != null ? `${Number(features.distance_km).toLocaleString()} km` : '—';
+      const wt = features && features.package_weight_kg != null ? `${features.package_weight_kg} kg` : '—';
+      const risk = gatheredRisk || {};
+      const rl = risk.risk_level ? escapeHtml(String(risk.risk_level)) : '—';
+      const buf = risk.recommended_buffer_days != null ? risk.recommended_buffer_days : '—';
+      const dp = risk.delay_probability != null ? (Number(risk.delay_probability) * 100).toFixed(1) + '%' : '—';
+      const nc = Array.isArray(gatheredCarriers) ? gatheredCarriers.length : 0;
+      el.innerHTML = `
+        <div><strong>Agents found:</strong> ${pkg} · ${route} · ${dist} · ${wt}</div>
+        <div style="margin-top:0.35rem;"><strong>Risk:</strong> ${rl} · +${buf} buffer day(s) · delay signal ${dp} · <strong>Carriers:</strong> ${nc} option(s)</div>
+      `;
+    }
+
+
+    function buildCardBriefLines(m) {
+      const lines = [];
+      if (m.id === 'm01') {
+        if (features && features.package_type) lines.push(escapeHtml(String(features.package_type)));
+        if (features && (features.origin || features.destination)) {
+          lines.push(escapeHtml(`${features.origin || '?'} → ${features.destination || '?'}`));
+        }
+        if (features && (features.distance_km != null || features.package_weight_kg != null)) {
+          lines.push(escapeHtml(`${features.distance_km != null ? Number(features.distance_km).toFixed(0) + ' km' : '—'} · ${features.package_weight_kg != null ? features.package_weight_kg + ' kg' : '—'}`));
+        }
+      } else if (m.id === 'm02') {
+        const r = gatheredRisk || {};
+        if (r.risk_level) lines.push(escapeHtml(String(r.risk_level)));
+        if (r.recommended_buffer_days != null) lines.push(`+${r.recommended_buffer_days} buffer day(s)`);
+        if (r.delay_probability != null) lines.push(`delay ~${(Number(r.delay_probability) * 100).toFixed(1)}%`);
+      } else if (m.id === 'm03') {
+        const n = Array.isArray(gatheredCarriers) ? gatheredCarriers.length : 0;
+        if (n) lines.push(`${n} carrier option(s)`);
+        const top = gatheredCarriers && gatheredCarriers[0];
+        if (top) {
+          const nm = top.carrier || top.route?.delivery_partner || 'carrier';
+          lines.push(escapeHtml(String(nm)));
+        }
+        if (gatheredBenchmark != null) lines.push(`bench ~₹${Number(gatheredBenchmark).toFixed(0)}`);
+      } else if (optimizePhaseBriefs[m.id] && optimizePhaseBriefs[m.id].length) {
+        optimizePhaseBriefs[m.id].forEach((l) => lines.push(l));
+      }
+      return lines;
+    }
+
+    function renderModuleGrid(status, metrics) {
+      if (status) lastAgentGridStatus = { ...status };
+      if (metrics !== undefined) lastAgentGridMetrics = metrics;
+      const grid = document.getElementById('module-grid');
+      const cardHtml = (m) => {
+        const st = (status && status[m.id]) || 'idle';
+        const meta = metrics && metrics[m.id];
+        const roleLabel = m.role === 'llm' ? '<span class="llm-pill">LLM agent</span>' : '<span class="llm-pill" style="background:rgba(93,156,236,0.12);color:var(--accent-blue);">Tool</span>';
+        let statusHtml = '';
+        if (st === 'running') statusHtml = '<span class="spinner"></span> Running';
+        else if (st === 'complete') statusHtml = '✓ Done';
+        else if (st === 'error') statusHtml = '✗ Error';
+        else statusHtml = 'Waiting';
+        const lines = buildCardBriefLines(m);
+        const bodyInner = lines.length
+          ? lines.map((l) => `<div class="module-brief-line">${l}</div>`).join('')
+          : '<div class="module-skeleton">···</div>';
+        let metricHtml = '';
+        if (meta && meta.text) metricHtml = `<div class="module-metric">${meta.text}</div>`;
+        return `<div class="module-card" data-status="${st}">
+          <div class="module-title">${roleLabel}</div>
+          <div class="module-name">${escapeHtml(m.name)}</div>
+          <div class="module-desc" style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(m.desc)}</div>
+          <div class="module-brief-lines">${bodyInner}</div>
+          ${metricHtml}
+          <div class="module-status">${statusHtml}</div>
+        </div>`;
+      };
+      const byId = Object.fromEntries(MODULES.map((m) => [m.id, m]));
+      const sub = (id) => subtoolStatus[id] || 'idle';
+      grid.innerHTML = `
+        <div class="arch-row">${cardHtml(byId.m01)}</div>
+        <div class="arch-connector">│</div>
+        <div class="arch-connector split">┌───────┴───────┐</div>
+        <div class="arch-row">
+          <div class="agent-column">
+            <div class="agent-column-title">Risk branch</div>
+            ${cardHtml(byId.m02)}
+          </div>
+          <div class="agent-column">
+            <div class="agent-column-title">Sourcing branch</div>
+            ${cardHtml(byId.m03)}
+          </div>
+        </div>
+        <div class="arch-row tools">
+          <div class="agent-column">
+            <div class="inner-tools">
+              <span class="inner-tool" data-state="${sub('risk.weather')}">☁️ Weather</span>
+              <span class="inner-tool" data-state="${sub('risk.news')}">📰 News</span>
+              <span class="inner-tool" data-state="${sub('risk.web')}">🔍 Web</span>
+            </div>
+          </div>
+          <div class="agent-column">
+            <div class="inner-tools">
+              <span class="inner-tool" data-state="${sub('sourcing.distance')}">📍 Distance</span>
+              <span class="inner-tool" data-state="${sub('sourcing.carriers')}">🚚 Carriers</span>
+              <span class="inner-tool" data-state="${sub('sourcing.web')}">🔍 Web</span>
+            </div>
+          </div>
+        </div>
+        <div class="arch-divider">Card states as pipeline runs</div>
+        <div class="arch-row post-row">
+          ${cardHtml(byId.m04)}
+          <span class="post-arrow" aria-hidden="true">→</span>
+          ${cardHtml(byId.m05)}
+          <span class="post-arrow" aria-hidden="true">→</span>
+          ${cardHtml(byId.m06)}
+        </div>
+      `;
+    }
+
+    function renderShipmentBar() {
+      const bar = document.getElementById('shipment-bar');
+      if (!features) { bar.innerHTML = ''; return; }
+      const parts = [];
+      if (features.package_type) parts.push(`<span>Package</span> <strong>${String(features.package_type)}</strong>`);
+      if (features.distance_km != null) parts.push(`<span>Distance</span> <strong>${features.distance_km} km</strong>`);
+      if (features.package_weight_kg != null) parts.push(`<span>Weight</span> <strong>${features.package_weight_kg} kg</strong>`);
+      if (features.origin) parts.push(`<span>Origin</span> <strong>${features.origin}</strong>`);
+      if (features.destination) parts.push(`<span>Destination</span> <strong>${features.destination}</strong>`);
+      bar.innerHTML = parts.join('');
+    }
+
+    function renderWeAssumed() {
+      const div = document.getElementById('we-assumed');
+      div.innerHTML = EDITABLE_KEYS.map(key => {
+        const label = FIELD_LABELS[key] || key;
+        const val = features[key] ?? '';
+        const opts = OPTIONS[key];
+        if (opts) {
+          return `<div class="row" data-key="${key}">
+            <label>${label}</label>
+            <span class="value-display">${val}</span>
+            <select class="value-edit" style="display:none;">${opts.map(o => `<option value="${o}" ${o === val ? 'selected' : ''}>${o}</option>`).join('')}</select>
+            <button type="button" class="btn-edit">Edit</button>
+          </div>`;
+        }
+        return `<div class="row" data-key="${key}">
+          <label>${label}</label>
+          <span class="value-display">${val}</span>
+          <input type="text" class="value-edit" style="display:none;" value="${val}" />
+          <button type="button" class="btn-edit">Edit</button>
+        </div>`;
+      }).join('');
+
+      div.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const row = this.closest('.row');
+          const key = row.dataset.key;
+          const display = row.querySelector('.value-display');
+          const edit = row.querySelector('.value-edit');
+          if (edit.style.display === 'none') {
+            display.style.display = 'none';
+            edit.style.display = edit.tagName === 'SELECT' ? 'inline-block' : 'block';
+            edit.focus();
+          } else {
+            const newVal = edit.tagName === 'SELECT' ? edit.value : edit.value.trim();
+            if (key === 'package_weight_kg' || key === 'distance_km') features[key] = parseFloat(newVal) || features[key];
+            else features[key] = newVal;
+            display.textContent = features[key];
+            display.style.display = '';
+            edit.style.display = 'none';
+          }
+        });
+      });
+      div.querySelectorAll('.value-edit').forEach(el => {
+        el.addEventListener('change', function () {
+          const row = this.closest('.row');
+          const key = row.dataset.key;
+          const display = row.querySelector('.value-display');
+          const newVal = this.tagName === 'SELECT' ? this.value : this.value.trim();
+          if (key === 'package_weight_kg' || key === 'distance_km') features[key] = parseFloat(newVal) || features[key];
+          else features[key] = newVal;
+          display.textContent = features[key];
+          display.style.display = '';
+          this.style.display = 'none';
+        });
+        el.addEventListener('blur', function () {
+          if (this.style.display !== 'none') {
+            const row = this.closest('.row');
+            const key = row.dataset.key;
+            const display = row.querySelector('.value-display');
+            const newVal = this.tagName === 'SELECT' ? this.value : this.value.trim();
+            if (key === 'package_weight_kg' || key === 'distance_km') features[key] = parseFloat(newVal) || features[key];
+            else features[key] = newVal;
+            display.textContent = features[key];
+            display.style.display = '';
+            this.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    function renderRiskGathered() {
+      const div = document.getElementById('risk-gathered');
+      if (!div) return;
+      const risk = gatheredRisk || {};
+      const rf = Array.isArray(risk.risk_factors) ? risk.risk_factors.join(', ') : '—';
+      let src;
+      if (gatheredLlmStatus.risk === 'available') src = 'Risk Agent (LLM) ✓';
+      else if (gatheredLlmStatus.risk === 'refining') src = 'Deterministic baseline · Risk Agent (LLM) updating…';
+      else src = 'Deterministic fallback ⚠';
+      div.innerHTML = `
+        <div class="row"><label>Risk Level</label><span class="value-display">${risk.risk_level ?? '—'}</span></div>
+        <div class="row"><label>Delay Probability</label><span class="value-display">${risk.delay_probability != null ? (Number(risk.delay_probability) * 100).toFixed(1) + '%' : '—'}</span></div>
+        <div class="row"><label>Buffer Days</label><span class="value-display">${risk.recommended_buffer_days ?? '—'}</span></div>
+        <div class="row"><label>Weather Condition</label><span class="value-display">${risk.weather_condition ?? features?.weather_condition ?? '—'}</span></div>
+        <div class="row"><label>Risk Factors</label><span class="value-display">${rf}</span></div>
+        <div class="warning-box" style="margin-top:0.5rem;">Buffer rationale: ${risk.buffer_rationale || '—'}</div>
+        <div class="warning-box" style="margin-top:0.5rem;">Source: ${src}</div>
+      `;
+    }
+
+    function renderCarriersGathered() {
+      const div = document.getElementById('carriers-gathered');
+      if (!div) return;
+      if (!Array.isArray(gatheredCarriers) || !gatheredCarriers.length) {
+        div.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No carriers gathered yet.</p>';
+        return;
+      }
+      const rows = gatheredCarriers.map((c, i) => {
+        const name = c.carrier || c.route?.delivery_partner || `carrier-${i + 1}`;
+        const cost = c.predicted_cost != null ? Number(c.predicted_cost).toFixed(2) : '—';
+        const onTime = c.predicted_on_time_pct != null ? Number(c.predicted_on_time_pct).toFixed(1) : '—';
+        const carbon = c.total_carbon_gco2 != null ? Number(c.total_carbon_gco2).toFixed(0) : '—';
+        const vehicle = c.route?.vehicle_type || '—';
+        return `<div class="row">
+          <label>${name}</label>
+          <span class="value-display">₹${cost} · ${onTime}% · ${carbon} gCO₂ · ${vehicle}</span>
+        </div>`;
+      }).join('');
+      let src;
+      if (gatheredLlmStatus.sourcing === 'available') src = 'Sourcing Agent (LLM) ✓';
+      else if (gatheredLlmStatus.sourcing === 'refining') src = 'Deterministic shortlist · Sourcing Agent (LLM) updating…';
+      else src = 'Deterministic fallback ⚠';
+      const bm = gatheredBenchmark != null ? `₹${Number(gatheredBenchmark).toFixed(2)}` : '—';
+      div.innerHTML = rows
+        + `<div class="warning-box" style="margin-top:0.5rem;">Benchmark: ${bm}</div>`
+        + `<div class="warning-box" style="margin-top:0.5rem;">LLM Recommendation: ${gatheredRecommendation || '—'}</div>`
+        + `<div class="warning-box" style="margin-top:0.5rem;">Benchmark reasoning: ${gatheredBenchmarkReasoning || '—'}</div>`
+        + `<div class="warning-box" style="margin-top:0.5rem;">Source: ${src}</div>`;
+    }
+
+    /** runningIndex = which module is currently "running" (0..7). 0..runningIndex-1 = complete, rest idle. */
+    function setPipelineState(runningIndex, metrics) {
+      const status = {};
+      MODULES.forEach((m, i) => {
+        if (i < runningIndex) status[m.id] = 'complete';
+        else if (i === runningIndex) status[m.id] = 'running';
+        else status[m.id] = 'idle';
+      });
+      renderModuleGrid(status, metrics);
+    }
+
+    function setAllModulesComplete(metrics) {
+      const status = {};
+      MODULES.forEach(m => { status[m.id] = 'complete'; });
+      renderModuleGrid(status, metrics);
+    }
+
+    function setModulesComplete(data) {
+      const breakdown = (data.optimization_result && data.optimization_result.breakdown) || {};
+      const earlyWarning = (data.optimization_result && data.optimization_result.early_warning) || {};
+      const gov = data.governance || {};
+      const mode = data.execution_mode || 'deterministic_fallback';
+      const carbon = (data.transport_carbon || 0) + (data.ai_carbon || 0);
+      const formatGco2 = (v) => {
+        if (v == null || Number.isNaN(Number(v))) return '—';
+        const x = Number(v);
+        const ax = Math.abs(x);
+        if (ax < 0.01) return ax >= 0.001 ? x.toFixed(3) : '<0.01';
+        if (ax < 0.1) return x.toFixed(3);
+        if (ax < 1) return x.toFixed(2);
+        return x.toFixed(0);
+      };
+      const metrics = {
+        m01: { text: `Mode: ${mode} · Supervisor: ${data.control_tower_supervisor || 'active'}`, time: '—' },
+        m02: { text: `Risk: ${data.risk_level || '—'} · Buffer ${data.recommended_buffer_days ?? '—'}d`, time: '—' },
+        m03: { text: `Carriers evaluated · Best: ${data.recommendation || '—'}`, time: '—' },
+        m04: { text: `Cost: ₹${(breakdown.cost != null ? Number(breakdown.cost).toFixed(0) : '—')} · CASP ${(data.optimization_result && data.optimization_result.casp_score != null ? Number(data.optimization_result.casp_score).toFixed(6) : '—')}`, time: '—' },
+        m05: { text: `AI compute: ${formatGco2(data.ai_carbon)} gCO₂ · ${((gov.recommendations && gov.recommendations.length) ? gov.recommendations.length + ' governance notes' : 'policy levers')}`, time: '—' },
+        m06: { text: `Synthesis: ${data.supervisor_summary || 'Complete'}${(data.fallback_notes && data.fallback_notes.length) ? ' · fallback used' : ''}`, time: '—' },
+      };
+      const status = {};
+      MODULES.forEach(m => { status[m.id] = 'complete'; });
+      renderModuleGrid(status, metrics);
+    }
+
+    function setModulesError() {
+      const status = {};
+      MODULES.forEach(m => { status[m.id] = 'complete'; });
+      status.m06 = 'error';
+      renderModuleGrid(status, null);
+    }
+
+    function sleep(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    }
+
+    function formatGco2Local(v) {
+      if (v == null || Number.isNaN(Number(v))) return '—';
+      const x = Number(v);
+      const ax = Math.abs(x);
+      if (ax < 0.01) return ax >= 0.001 ? x.toFixed(3) : '<0.01';
+      if (ax < 0.1) return x.toFixed(3);
+      if (ax < 1) return x.toFixed(2);
+      return x.toFixed(0);
+    }
+
+    function optimizeBriefLinesFor(mid, data) {
+      const breakdown = (data.optimization_result && data.optimization_result.breakdown) || {};
+      const gov = data.governance || {};
+      if (mid === 'm04') {
+        const lines = [];
+        if (breakdown.cost != null) lines.push(`₹${Number(breakdown.cost).toFixed(0)}`);
+        if (breakdown.predicted_on_time != null) lines.push(`${Number(breakdown.predicted_on_time).toFixed(1)}% on-time`);
+        return lines;
+      }
+      if (mid === 'm05') {
+        const lines = [];
+        if (data.transport_carbon != null) lines.push(`${Number(data.transport_carbon).toFixed(0)} gCO₂ transport`);
+        lines.push(`${formatGco2Local(data.ai_carbon)} gCO₂ AI`);
+        if (gov.recommendations && gov.recommendations.length) lines.push(`${gov.recommendations.length} governance notes`);
+        return lines;
+      }
+      if (mid === 'm06') {
+        const lines = [];
+        if (data.greenest_viable) lines.push(escapeHtml(String(data.greenest_viable)));
+        const eff = data.efficiency_percentage ? String(data.efficiency_percentage) : '';
+        if (eff) lines.push(escapeHtml(eff));
+        return lines;
+      }
+      return [];
+    }
+
+    function fillResultsHero(data) {
+      const rec = data.recommendation || '—';
+      const cost = data.cost != null ? data.cost : (data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.cost);
+      const carbon = (data.transport_carbon != null ? data.transport_carbon : 0) + (data.ai_carbon != null ? data.ai_carbon : 0);
+      const onTime = data.on_time_probability != null ? data.on_time_probability : (data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.predicted_on_time);
+      const casp = data.optimization_result && data.optimization_result.casp_score;
+      const normalizeEffPct = (s) => {
+        if (!s) return '';
+        const m = String(s).trim().match(/^(-?\d+(?:\.\d+)?)%\s+(below|above)\s+(.+)$/i);
+        if (!m) return s;
+        return `${Math.abs(Number(m[1])).toFixed(1)}% ${m[2]} ${m[3]}`;
+      };
+      const effPctNorm = normalizeEffPct(data.efficiency_percentage || '');
+      const synth = (data.supervisor_synthesis || data.supervisor_summary || data.recommendation || '').trim();
+      const benchmarkCost = data.benchmark_cost_inr != null ? data.benchmark_cost_inr : null;
+      const benchmarkSource = data.benchmark_source != null ? data.benchmark_source : null;
+      const benchmarkLabel = benchmarkSource === 'market_rate_web' ? 'market' :
+        (benchmarkSource === 'historical_dataset' ? 'dataset avg' : 'benchmark');
+      const heroEl = document.getElementById('results-hero');
+      heroEl.innerHTML = `
+        <h3><span class="star">★</span> ${escapeHtml(String(rec))}</h3>
+        <div class="results-hero-metrics">
+          <span><strong>${cost != null ? '₹' + Number(cost).toFixed(2) : '—'}</strong> cost</span>
+          <span><strong>${onTime != null ? Number(onTime).toFixed(1) + '%' : '—'}</strong> on-time</span>
+          <span><strong>${data.risk_level ? escapeHtml(String(data.risk_level)) : '—'}</strong> risk</span>
+        </div>
+        <div style="font-size:0.9rem;margin:0.5rem 0;color:var(--text-muted);">
+          ${effPctNorm ? escapeHtml(effPctNorm) + ' vs ' + benchmarkLabel : (data.efficiency || '—')}
+          ${benchmarkCost != null ? ' · ref ₹' + Number(benchmarkCost).toFixed(0) : ''}
+          · <strong>${carbon != null ? Number(carbon).toFixed(0) : '—'}</strong> gCO₂ transport + AI
+        </div>
+        ${casp != null ? `<div style="font-size:0.85rem;margin:0.35rem 0;"><strong>CASP</strong> <code>${Number(casp).toExponential(4)}</code></div>` : ''}
+        ${synth ? `<div class="results-hero-synth">${escapeHtml(synth)}</div>` : ''}
+      `;
+    }
+
+    function renderResultPanelsFromData(data) {
+      const rec = data.recommendation;
+      const cost = data.cost != null ? data.cost : (data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.cost);
+      const carbon = (data.transport_carbon != null ? data.transport_carbon : 0) + (data.ai_carbon != null ? data.ai_carbon : 0);
+      const onTime = data.on_time_probability != null ? data.on_time_probability : (data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.predicted_on_time);
+      const casp = data.optimization_result && data.optimization_result.casp_score;
+      document.getElementById('rec-name').textContent = rec ? `Recommended: ${rec}` : 'No recommendation';
+      let metricsHtml = '';
+      metricsHtml += `<div class="metric-row"><span class="label">Cost</span><span class="value">₹${cost != null ? Number(cost).toFixed(2) : '—'}</span></div>`;
+      metricsHtml += `<div class="metric-row"><span class="label">Carbon</span><span class="value">${carbon != null ? Number(carbon).toFixed(0) + ' gCO₂' : '—'}</span></div>`;
+      metricsHtml += `<div class="metric-row"><span class="label">On-time</span><span class="value">${onTime != null ? Number(onTime).toFixed(1) + '%' : '—'}</span></div>`;
+      metricsHtml += `<div class="metric-row"><span class="label">Risk</span><span class="value">${data.risk_level || '—'}</span></div>`;
+      if (data.recommended_buffer_days != null) metricsHtml += `<div class="metric-row"><span class="label">Buffer (days)</span><span class="value">${data.recommended_buffer_days}</span></div>`;
+      if (casp != null) metricsHtml += `<div class="metric-row"><span class="label">CASP score</span><span class="value">${Number(casp).toFixed(6)}</span></div>`;
+      document.getElementById('results-metrics').innerHTML = metricsHtml;
+
+      const bizEl = document.getElementById('results-business');
+      let bizHtml = `<div class="metric-row"><span class="label">Transport carbon</span><span class="value">${(data.transport_carbon != null ? Number(data.transport_carbon).toFixed(0) : '—')} gCO₂</span></div>`;
+      bizHtml += `<div class="metric-row"><span class="label">AI compute carbon</span><span class="value">${(data.ai_carbon != null ? Number(data.ai_carbon).toFixed(3) : '—')} gCO₂</span></div>`;
+      bizHtml += `<div class="metric-row"><span class="label">Greenest viable</span><span class="value">${data.greenest_viable || '—'}</span></div>`;
+      if (data.risk_factors && data.risk_factors.length) bizHtml += `<div class="metric-row"><span class="label">Risk factors</span><span class="value">${data.risk_factors.join(', ')}</span></div>`;
+      bizEl.innerHTML = bizHtml;
+    }
+
+    async function runOptimizeFromGatheredContext() {
+      cancelOptimizeCountdown();
+      document.getElementById('optimize-error').textContent = '';
+      document.getElementById('review-strip').style.display = 'none';
+      uiPhase = 'optimizing';
+      showLayout();
+      document.getElementById('step-editor').classList.add('loading');
+      optimizePhaseBriefs = {};
+      try {
+        const data = await optimizeViaStream({
+          features,
+          risk: gatheredRisk,
+          carrier_options: gatheredCarriers,
+          benchmark: gatheredBenchmark,
+          recommendation: gatheredRecommendation,
+          benchmark_reasoning: gatheredBenchmarkReasoning,
+        });
+        setModulesComplete(data);
+        fillResultsHero(data);
+
+        const rec = data.recommendation;
+        const cost = data.cost != null ? data.cost : (data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.cost);
+        const carbon = (data.transport_carbon != null ? data.transport_carbon : 0) + (data.ai_carbon != null ? data.ai_carbon : 0);
+        const onTime = data.on_time_probability != null ? data.on_time_probability : (data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.predicted_on_time);
+        const casp = data.optimization_result && data.optimization_result.casp_score;
+        const formatGco2 = (v) => {
+          if (v == null || Number.isNaN(Number(v))) return '—';
+          const x = Number(v);
+          const ax = Math.abs(x);
+          if (ax < 0.01) return ax >= 0.001 ? x.toFixed(3) : '<0.01';
+          if (ax < 0.1) return x.toFixed(3);
+          if (ax < 1) return x.toFixed(2);
+          return x.toFixed(0);
+        };
+        const normalizeEffPct = (s) => {
+          if (!s) return '';
+          const m = String(s).trim().match(/^(-?\d+(?:\.\d+)?)%\s+(below|above)\s+(.+)$/i);
+          if (!m) return s;
+          const pctAbs = Math.abs(Number(m[1]));
+          return `${pctAbs.toFixed(1)}% ${m[2]} ${m[3]}`;
+        };
+        const benchmarkCost = data.benchmark_cost_inr != null ? data.benchmark_cost_inr : null;
+        const benchmarkSource = data.benchmark_source != null ? data.benchmark_source : null; // "market_rate_web" | "historical_dataset"
+        const benchmarkLabel = benchmarkSource === 'market_rate_web' ? 'Market rate (web)' :
+                                (benchmarkSource === 'historical_dataset' ? 'Historical avg (dataset)' : 'Benchmark');
+        const distKm = features?.distance_km;
+        const isDistanceOutlier = benchmarkSource === 'historical_dataset' && distKm != null && Number(distKm) > 300;
+
+        document.getElementById('rec-name').textContent = rec ? `Recommended: ${rec}` : 'No recommendation';
+        let metricsHtml = '';
+        metricsHtml += `<div class="metric-row"><span class="label">Cost</span><span class="value">₹${cost != null ? Number(cost).toFixed(2) : '—'}</span></div>`;
+        metricsHtml += `<div class="metric-row"><span class="label">${benchmarkLabel}</span><span class="value">${benchmarkCost != null ? '₹' + Number(benchmarkCost).toFixed(2) : '—'}</span></div>`;
+        const effPctNorm = normalizeEffPct(data.efficiency_percentage);
+        let effValue = `${data.efficiency || '—'}${effPctNorm ? ' (' + effPctNorm + ')' : ''}`;
+        if (isDistanceOutlier && data.efficiency) {
+          effValue += ` — expected due to long distance (${Number(distKm).toFixed(0)} km vs dataset avg ~150 km)`;
+        }
+        metricsHtml += `<div class="metric-row highlight"><span class="label">Efficiency</span><span class="value">${effValue}</span></div>`;
+        if (data.benchmark_reasoning) {
+          metricsHtml += `<div class="warning-box" style="margin-top:0.75rem;">Benchmark reasoning: ${escapeHtml(data.benchmark_reasoning)}</div>`;
+        }
+        if (data.buffer_rationale) {
+          metricsHtml += `<div class="warning-box" style="margin-top:0.5rem;">Buffer rationale: ${escapeHtml(data.buffer_rationale)}</div>`;
+        }
+        metricsHtml += `<div class="metric-row"><span class="label">Carbon</span><span class="value">${carbon != null ? Number(carbon).toFixed(0) + ' gCO₂' : '—'}</span></div>`;
+        metricsHtml += `<div class="metric-row"><span class="label">On-time</span><span class="value">${onTime != null ? Number(onTime).toFixed(1) + '%' : '—'}</span></div>`;
+        metricsHtml += `<div class="metric-row"><span class="label">Risk</span><span class="value">${data.risk_level || '—'}</span></div>`;
+        if (data.recommended_buffer_days != null) metricsHtml += `<div class="metric-row"><span class="label">Buffer (days)</span><span class="value">${data.recommended_buffer_days}</span></div>`;
+        if (casp != null) metricsHtml += `<div class="metric-row"><span class="label">CASP score</span><span class="value">${Number(casp).toFixed(6)}</span></div>`;
+        document.getElementById('results-metrics').innerHTML = metricsHtml;
+
+        const warnEl = document.getElementById('results-warning');
+        const warn = data.optimization_result && data.optimization_result.breakdown && data.optimization_result.breakdown.warning;
+        if (warn) { warnEl.textContent = warn; warnEl.style.display = 'block'; } else { warnEl.style.display = 'none'; }
+
+        const bizEl = document.getElementById('results-business');
+        let bizHtml = `<div class="metric-row"><span class="label">Transport carbon</span><span class="value">${(data.transport_carbon != null ? Number(data.transport_carbon).toFixed(0) : '—')} gCO₂</span></div>`;
+        bizHtml += `<div class="metric-row"><span class="label">AI compute carbon</span><span class="value">${(data.ai_carbon != null ? formatGco2(data.ai_carbon) : '—')} gCO₂</span></div>`;
+        bizHtml += `<div class="metric-row"><span class="label">Greenest viable</span><span class="value">${data.greenest_viable || '—'}</span></div>`;
+        if (data.risk_factors && data.risk_factors.length) bizHtml += `<div class="metric-row"><span class="label">Risk factors</span><span class="value">${data.risk_factors.join(', ')}</span></div>`;
+        bizEl.innerHTML = bizHtml;
+
+        const govRecs = (data.governance && data.governance.recommendations) || [];
+        const ewi = data.early_warning_indicators || {};
+        const ewiEl = document.getElementById('results-early-warning');
+        if (ewi.supplier_concentration_index || ewi.geographic_clustering || ewi.cold_chain_fragility) {
+          const s = ewi.supplier_concentration_index || {};
+          const g = ewi.geographic_clustering || {};
+          const c = ewi.cold_chain_fragility || {};
+          const q = ewi.quantified_amplification_risk || {};
+          let html = '<div class="metric-row"><span class="label">Amplification risk</span><span class="value">' + (q.label || '—') + (q.score != null ? ' (' + Number(q.score).toFixed(2) + ')' : '') + '</span></div>';
+          html += '<div class="metric-row"><span class="label">1. Supplier Concentration</span><span class="value">' + (s.value_pct != null ? s.value_pct + '%' : '—') + (s.exceeds ? ' ⚠ >' + s.threshold_pct + '%' : '') + '</span></div>';
+          html += '<div class="metric-row"><span class="label">2. Geographic Clustering</span><span class="value">' + (g.value_pct != null ? g.value_pct + '%' : '—') + (g.exceeds ? ' ⚠ >' + g.threshold_pct + '%' : '') + '</span></div>';
+          html += '<div class="metric-row"><span class="label">3. Cold-Chain Fragility</span><span class="value">' + (c.is_fragile ? 'Yes ⚠' : 'No') + (c.reason ? ' — ' + c.reason : '') + '</span></div>';
+          ewiEl.innerHTML = html;
+        } else {
+          ewiEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No early-warning indicators for this run.</p>';
+        }
+        document.getElementById('results-governance').innerHTML = govRecs.length
+          ? govRecs.map(r => `<li>${r.category || 'Policy'}: ${r.recommendation || ''}</li>`).join('')
+          : '<li>No governance recommendations for this run.</li>';
+
+        const expertPackets = data.expert_packets || {};
+        const renderPacket = (name, p) => {
+          if (!p) return `<div class="warning-box" style="margin-top:0.5rem;">${name}: no packet</div>`;
+          const constraints = p.constraints_proposed && Object.keys(p.constraints_proposed).length
+            ? escapeHtml(JSON.stringify(p.constraints_proposed))
+            : '—';
+          const evidence = Array.isArray(p.evidence) && p.evidence.length ? escapeHtml(p.evidence.join(', ')) : '—';
+          return `<div class="warning-box" style="margin-top:0.5rem;">
+            <strong>${escapeHtml(name)}</strong><br/>
+            Status: ${escapeHtml(String(p.status || 'unknown'))} · Confidence: ${escapeHtml(String(p.confidence ?? '—'))}<br/>
+            Finding: ${escapeHtml(String(p.finding || '—'))}<br/>
+            Constraints: ${constraints}<br/>
+            Evidence: ${evidence}<br/>
+            Notes: ${escapeHtml(String(p.notes || '—'))}
+          </div>`;
+        };
+        const deltas = (data.plan_comparison && data.plan_comparison.deltas) || {};
+        const deltaRow = `<div class="warning-box" style="margin-top:0.5rem;">
+          <strong>Baseline vs constrained rerun</strong><br/>
+          Cost Δ: ${Number(deltas.cost_pct || 0).toFixed(2)}% ·
+          On-time Δ: ${Number(deltas.on_time_pct || 0).toFixed(2)}% ·
+          Carbon Δ: ${Number(deltas.carbon_pct || 0).toFixed(2)}%
+        </div>`;
+        const fallback = (data.fallback_notes && data.fallback_notes.length)
+          ? `<div class="warning-box" style="margin-top:0.5rem;">Fallback notes: ${escapeHtml(data.fallback_notes.join(' | '))}</div>`
+          : `<div class="warning-box" style="margin-top:0.5rem;">Fallback notes: none</div>`;
+        document.getElementById('results-experts').innerHTML =
+          `<div class="warning-box"><strong>Execution mode:</strong> ${escapeHtml(String(data.execution_mode || 'deterministic_fallback'))} · LLM: ${escapeHtml(String(data.llm_status || 'unavailable'))}</div>`
+          + renderPacket('Operations Risk Desk', expertPackets.risk_expert_packet)
+          + renderPacket('Carrier Procurement Desk', expertPackets.sourcing_expert_packet)
+          + renderPacket('Pricing & Planning Desk', expertPackets.planning_expert_packet)
+          + renderPacket('Sustainability & Policy Desk', expertPackets.sustainability_expert_packet)
+          + deltaRow
+          + fallback;
+
+        const impactEl = document.getElementById('impact-line');
+        const eff = data.efficiency_percentage || '';
+        const riskFactors = (data.risk_factors && data.risk_factors.length) ? data.risk_factors.join(', ') : '';
+        const bufferDays = data.recommended_buffer_days != null ? data.recommended_buffer_days : '';
+        let impactHtml = '<strong>Impact:</strong> ';
+        if (eff) impactHtml += `Cost ${normalizeEffPct(eff)} vs ${benchmarkLabel}. `;
+        impactHtml += `On-time target ${onTime != null ? Number(onTime).toFixed(1) : '—'}% · Carbon footprint ${carbon != null ? (carbon / 1000).toFixed(2) : '—'} kg CO₂.`;
+        if (riskFactors) impactHtml += ` Risk factors: ${riskFactors}.`;
+        if (bufferDays) impactHtml += ` Recommended buffer: ${bufferDays} day(s).`;
+        impactEl.innerHTML = impactHtml;
+        impactEl.style.display = 'block';
+
+        uiPhase = 'results';
+        setAccordionOpen(false);
+        showLayout();
+        document.getElementById('results-hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e) {
+        document.getElementById('optimize-error').textContent = e.message || 'Optimization failed.';
+        uiPhase = 'editing';
+        setAccordionOpen(true);
+        renderEditorForm();
+        showLayout();
+        setModulesError();
+      } finally {
+        document.getElementById('step-editor').classList.remove('loading');
+      }
+    }
+
+    function setDeskProgressFromEvent(evt) {
+      if (evt.init_event_loop || evt.start_event_loop) {
+        subtoolStatus = {
+          'risk.weather': 'idle',
+          'risk.news': 'idle',
+          'risk.web': 'idle',
+          'sourcing.distance': 'idle',
+          'sourcing.carriers': 'idle',
+          'sourcing.web': 'idle',
+        };
+        uiPhase = 'working';
+        showLayout();
+        const status = {};
+        MODULES.forEach((m, i) => { status[m.id] = i === 0 ? 'running' : 'idle'; });
+        renderModuleGrid(status, null);
+        document.getElementById('optimize-error').textContent = '';
+        return;
+      }
+      if (evt.subtool_event && evt.subtool_event.id) {
+        const id = String(evt.subtool_event.id);
+        const state = String(evt.subtool_event.state || '').toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(subtoolStatus, id)) {
+          subtoolStatus[id] = (state === 'start' || state === 'running') ? 'running' : (state === 'done' || state === 'complete' ? 'complete' : 'idle');
+          if (lastAgentGridStatus) renderModuleGrid(lastAgentGridStatus, lastAgentGridMetrics || null);
+        }
+      }
+      if (evt.current_tool_use && evt.current_tool_use.name) {
+        const toolName = evt.current_tool_use.name;
+        const card = TOOL_TO_CARD[toolName];
+        if (card) {
+          const status = { ...(lastAgentGridStatus || {}) };
+          if (Object.keys(status).length === 0) {
+            MODULES.forEach((m) => { status[m.id] = 'idle'; });
+          }
+          status[card] = 'running';
+          renderModuleGrid(status, lastAgentGridMetrics || null);
+        }
+      }
+      if (evt.tool_result && evt.tool_result.name) {
+        const toolName = evt.tool_result.name;
+        const card = TOOL_TO_CARD[toolName];
+        if (card) {
+          const status = { ...(lastAgentGridStatus || {}) };
+          if (Object.keys(status).length === 0) {
+            MODULES.forEach((m) => { status[m.id] = 'idle'; });
+          }
+          status[card] = 'complete';
+          renderModuleGrid(status, lastAgentGridMetrics || null);
+        }
+      }
+      if (evt.partial_context) {
+        applyPartialContext(evt.partial_context);
+      }
+    }
+
+    function ensureFeatureShape() {
+      if (!features) features = {};
+      EDITABLE_KEYS.forEach((k) => {
+        if (features[k] == null) features[k] = '';
+      });
+      if (!features.weather_origin) features.weather_origin = features.weather_condition || '';
+      if (!features.weather_destination) features.weather_destination = features.weather_condition || '';
+    }
+
+    function renderEditorForm() {
+      ensureFeatureShape();
+      renderShipmentBar();
+      renderWeAssumed();
+      renderRiskGathered();
+      renderCarriersGathered();
+    }
+
+    function refreshAgentGridWithBriefs() {
+      if (lastAgentGridStatus) renderModuleGrid(lastAgentGridStatus, lastAgentGridMetrics);
+    }
+
+    function applyPartialContext(ctx) {
+      if (!ctx || typeof ctx !== 'object') return;
+      if (ctx.features && typeof ctx.features === 'object') {
+        features = { ...(features || {}), ...ctx.features };
+      }
+      if (Array.isArray(ctx.defaults_used)) defaultsUsed = ctx.defaults_used;
+      if (ctx.risk && typeof ctx.risk === 'object') gatheredRisk = ctx.risk;
+      if (Array.isArray(ctx.carrier_options)) gatheredCarriers = ctx.carrier_options;
+      if (Object.prototype.hasOwnProperty.call(ctx, 'benchmark')) gatheredBenchmark = ctx.benchmark;
+      if (Object.prototype.hasOwnProperty.call(ctx, 'recommendation')) gatheredRecommendation = ctx.recommendation;
+      if (Object.prototype.hasOwnProperty.call(ctx, 'benchmark_reasoning')) gatheredBenchmarkReasoning = ctx.benchmark_reasoning;
+      if (ctx.llm_status && typeof ctx.llm_status === 'object') {
+        gatheredLlmStatus = { ...(gatheredLlmStatus || {}), ...ctx.llm_status };
+      }
+      const ab = document.getElementById('accordion-body');
+      if (ab && ab.classList.contains('is-open')) renderEditorForm();
+      refreshAgentGridWithBriefs();
+    }
+
+    async function fullPipelineStream(query) {
+      return new Promise((resolve, reject) => {
+        const url = `${API}/api/chat/stream-full?message=${encodeURIComponent(query)}`;
+        const es = new EventSource(url);
+        let settled = false;
+        es.onmessage = (msg) => {
+          try {
+            const evt = JSON.parse(msg.data || '{}');
+            setDeskProgressFromEvent(evt);
+            if (evt.result) {
+              settled = true;
+              es.close();
+              resolve(evt.result);
+            }
+          } catch (e) {
+            // ignore malformed chunks
+          }
+        };
+        es.onerror = () => {
+          if (!settled) {
+            es.close();
+            reject(new Error('Streaming pipeline failed'));
+          }
+        };
+      });
+    }
+
+    async function optimizeViaStream(context) {
+      return new Promise((resolve, reject) => {
+        fetch(API + '/api/chat/stream-optimize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ context }),
+        }).then(async (res) => {
+          if (!res.ok || !res.body) {
+            const tx = await res.text().catch(() => '');
+            throw new Error(tx || 'Optimize stream failed');
+          }
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let settled = false;
+          let buf = '';
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buf += decoder.decode(value, { stream: true });
+            const chunks = buf.split('\n\n');
+            buf = chunks.pop() || '';
+            for (const c of chunks) {
+              const line = c.split('\n').find((ln) => ln.startsWith('data: '));
+              if (!line) continue;
+              try {
+                const evt = JSON.parse(line.slice(6));
+                setDeskProgressFromEvent(evt);
+                if (evt.result) {
+                  settled = true;
+                  resolve(evt.result);
+                  return;
+                }
+              } catch (_) {}
+            }
+          }
+          if (!settled) reject(new Error('Optimize stream ended without result'));
+        }).catch(reject);
+      });
+    }
+
+    function resetToQuery() {
+      cancelOptimizeCountdown();
+      uiPhase = 'query';
+      optimizePhaseBriefs = {};
+      lastAgentGridStatus = null;
+      lastAgentGridMetrics = null;
+      setAccordionOpen(false);
+      showLayout();
+    }
+
+    document.getElementById('btn-extract').addEventListener('click', async () => {
+      const query = document.getElementById('query').value.trim();
+      document.getElementById('extract-error').textContent = '';
+      if (!query) {
+        document.getElementById('extract-error').textContent = 'Enter a shipment description.';
+        return;
+      }
+      document.getElementById('btn-extract').disabled = true;
+      document.getElementById('step-query').classList.add('loading');
+      document.getElementById('optimize-error').textContent = '';
+      try {
+        features = {};
+        defaultsUsed = [];
+        gatheredRisk = {};
+        gatheredCarriers = [];
+        gatheredBenchmark = null;
+        gatheredRecommendation = null;
+        gatheredBenchmarkReasoning = null;
+        gatheredLlmStatus = { risk: 'unavailable', sourcing: 'unavailable' };
+        optimizePhaseBriefs = {};
+        uiPhase = 'working';
+        document.getElementById('review-strip').style.display = 'none';
+        setAccordionOpen(false);
+        showLayout();
+        const sk = {};
+        MODULES.forEach((m, i) => { sk[m.id] = i === 0 ? 'running' : 'idle'; });
+        renderModuleGrid(sk, null);
+        const data = await fullPipelineStream(query);
+        features = features || {};
+        if (!features.weather_origin) features.weather_origin = features.weather_condition || 'clear';
+        if (!features.weather_destination) features.weather_destination = features.weather_condition || 'clear';
+        if (data && typeof data === 'object') {
+          gatheredRisk = {
+            risk_level: data.risk_level,
+            risk_factors: data.risk_factors || [],
+            recommended_buffer_days: data.recommended_buffer_days,
+            buffer_rationale: data.buffer_rationale,
+          };
+          gatheredCarriers = Array.isArray(data.carrier_options) ? data.carrier_options : [];
+          gatheredRecommendation = data.recommendation ?? null;
+          gatheredBenchmark = data.benchmark_cost_inr ?? null;
+          gatheredBenchmarkReasoning = data.benchmark_reasoning ?? null;
+          setModulesComplete(data);
+          fillResultsHero(data);
+          renderResultPanelsFromData(data);
+          uiPhase = 'results';
+          showLayout();
+        }
+      } catch (e) {
+        document.getElementById('extract-error').textContent = e.message || 'Analysis failed.';
+        resetToQuery();
+      } finally {
+        document.getElementById('btn-extract').disabled = false;
+        document.getElementById('step-query').classList.remove('loading');
+      }
+    });
+
+    document.getElementById('btn-edit-details').addEventListener('click', () => {
+      cancelOptimizeCountdown();
+      document.getElementById('review-strip').style.display = 'none';
+      uiPhase = 'editing';
+      showLayout();
+      setAccordionOpen(true);
+      renderEditorForm();
+    });
+
+    document.getElementById('btn-run-now').addEventListener('click', () => {
+      runOptimizeFromGatheredContext();
+    });
+
+    document.getElementById('btn-rerun-optimize').addEventListener('click', async () => {
+      document.getElementById('optimize-error').textContent = '';
+      await runOptimizeFromGatheredContext();
+    });
+
+    document.getElementById('accordion-toggle').addEventListener('click', () => {
+      const body = document.getElementById('accordion-body');
+      setAccordionOpen(!body.classList.contains('is-open'));
+      if (body.classList.contains('is-open')) renderEditorForm();
+    });
+
+    document.getElementById('btn-accordion-from-results').addEventListener('click', () => {
+      uiPhase = 'results';
+      showLayout();
+      setAccordionOpen(true);
+      renderEditorForm();
+      document.getElementById('step-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('tech-toggle').addEventListener('click', () => {
+      const content = document.getElementById('tech-content');
+      const isHidden = content.style.display === 'none';
+      content.style.display = isHidden ? 'block' : 'none';
+      document.getElementById('tech-toggle').textContent = isHidden ? '▲ Hide technical details' : '▼ Technical details (CASP, desks, data)';
+    });
+
+    document.getElementById('btn-export').addEventListener('click', () => {
+      const hero = document.getElementById('results-hero');
+      const metricsEl = document.getElementById('results-metrics');
+      const lines = [(hero ? hero.innerText : ''), '', metricsEl ? metricsEl.innerText : ''];
+      const text = lines.join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => { document.getElementById('btn-export').textContent = 'Copied!'; setTimeout(() => { document.getElementById('btn-export').textContent = 'Copy summary'; }, 2000); }).catch(() => {});
+      }
+    });
+
+    document.getElementById('btn-start-over').addEventListener('click', () => {
+      features = null; defaultsUsed = []; gatheredRisk = {}; gatheredCarriers = [];
+      gatheredBenchmark = null; gatheredRecommendation = null; gatheredBenchmarkReasoning = null;
+      document.getElementById('impact-line').style.display = 'none';
+      document.getElementById('query').value = '';
+      resetToQuery();
+    });
+    document.getElementById('btn-start-over2').addEventListener('click', () => {
+      features = null; defaultsUsed = []; gatheredRisk = {}; gatheredCarriers = [];
+      gatheredBenchmark = null; gatheredRecommendation = null; gatheredBenchmarkReasoning = null;
+      document.getElementById('impact-line').style.display = 'none';
+      document.getElementById('query').value = '';
+      resetToQuery();
+    });
+    document.getElementById('btn-regather').addEventListener('click', () => {
+      const q = `${features?.delivery_mode || 'express'} ${features?.package_type || 'shipment'} shipment ${features?.origin || 'delhi'} to ${features?.destination || 'mumbai'}, ${features?.package_weight_kg || 5}kg`;
+      document.getElementById('query').value = q;
+      document.getElementById('btn-extract').click();
+    });
+    document.querySelectorAll('.sample-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-sample') || '';
+        document.getElementById('query').value = text;
+        document.getElementById('query').focus();
+      });
+    });
+
+    showLayout();
+  </script>
+</body>
+</html>

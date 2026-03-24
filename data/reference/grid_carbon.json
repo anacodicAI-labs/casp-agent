@@ -1,0 +1,87 @@
+{
+  "_metadata": {
+    "description": "Grid carbon intensity by country (gCO2/kWh)",
+    "version": "1.0",
+    "last_updated": "2024",
+    "sources": [
+      "EPA eGRID 2023: https://www.epa.gov/egrid",
+      "Electricity Maps: https://www.electricitymaps.com/",
+      "Kaur et al. (2026) 'The Carbon Cost of Intelligence': https://doi.org/10.3390/en19030642",
+      "Patterson et al. (2021) 'Carbon emissions and large neural network training': https://arxiv.org/abs/2104.10350"
+    ]
+  },
+  "grid_intensities": {
+    "india": {
+      "intensity_gco2_kwh": 708,
+      "_source": "Electricity Maps 2024",
+      "_note": "High coal dependency"
+    },
+    "china": {
+      "intensity_gco2_kwh": 555,
+      "_source": "Electricity Maps 2024",
+      "_note": "Coal-heavy, improving"
+    },
+    "japan": {
+      "intensity_gco2_kwh": 465,
+      "_source": "Electricity Maps 2024",
+      "_note": "Mixed, post-Fukushima"
+    },
+    "usa": {
+      "intensity_gco2_kwh": 386,
+      "_source": "EPA eGRID 2023",
+      "_note": "Mixed grid (regional variation high)"
+    },
+    "canada": {
+      "intensity_gco2_kwh": 110,
+      "_source": "Electricity Maps 2024",
+      "_note": "Hydro-heavy"
+    },
+    "germany": {
+      "intensity_gco2_kwh": 350,
+      "_source": "Electricity Maps 2024",
+      "_note": "Energiewende transition"
+    },
+    "uk": {
+      "intensity_gco2_kwh": 193,
+      "_source": "Electricity Maps 2024",
+      "_note": "Strong wind/gas mix"
+    },
+    "france": {
+      "intensity_gco2_kwh": 56,
+      "_source": "Electricity Maps 2024",
+      "_note": "Nuclear-dominated"
+    },
+    "norway": {
+      "intensity_gco2_kwh": 20,
+      "_source": "Electricity Maps 2024",
+      "_note": "Hydro-dominated (cleanest)"
+    },
+    "poland": {
+      "intensity_gco2_kwh": 635,
+      "_source": "Electricity Maps 2024",
+      "_note": "Coal-heavy"
+    },
+    "brazil": {
+      "intensity_gco2_kwh": 85,
+      "_source": "Electricity Maps 2024",
+      "_note": "Hydro-heavy"
+    },
+    "australia": {
+      "intensity_gco2_kwh": 520,
+      "_source": "Electricity Maps 2024",
+      "_note": "Coal-heavy"
+    },
+    "default": {
+      "intensity_gco2_kwh": 400,
+      "_source": "Conservative default",
+      "_note": "Used for unknown countries"
+    }
+  },
+  "region_to_country": {
+    "west": "india",
+    "central": "india",
+    "east": "india",
+    "north": "india",
+    "south": "india"
+  }
+}

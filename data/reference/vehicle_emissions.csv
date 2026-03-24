@@ -1,0 +1,7 @@
+vehicle_type,gco2_per_km,source
+bike,50,CPCB India Two-Wheeler Emission Inventory 2023
+ev bike,22,BEE India EV Report 2023 (India grid 708 gCO2/kWh)
+scooter,50,CPCB India Two-Wheeler Emission Inventory 2023
+ev van,150,UK Government GHG conversion factors 2024
+van,750,ICCT India 2023 LCV emission factor
+truck,1400,ICCT India 2023 HCV emission factor

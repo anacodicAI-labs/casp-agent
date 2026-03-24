@@ -1,0 +1,7 @@
+package_type,indicator,value_pct,threshold_pct,amplification_risk
+pharmacy,Supplier concentration,11.96,40.0,0.0
+pharmacy,Geographic clustering,21.39,60.0,0.0
+pharmacy,Cold-chain fragility,0,0,0.5
+clothing,Supplier concentration,12.18,40.0,0.0
+clothing,Geographic clustering,20.56,60.0,0.0
+clothing,Cold-chain fragility,0,0,0.0

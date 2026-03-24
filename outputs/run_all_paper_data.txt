@@ -1,0 +1,183 @@
+============================================================
+PAPER DATA PIPELINE
+============================================================
+
+[1/2] Running evaluate_models.py ...
+script_dir /Users/rashandhillon/pa-manual/anacodic-ai/_infra/profile/research/casp/casp-agent
+
+============================================================
+COMPREHENSIVE MODEL EVALUATION
+============================================================
+
+============================================================
+MODULE 01: PREDICTIVE ANALYTICS
+============================================================
+✓ Loaded 25000 records
+
+📊 Training Cost Prediction Model...
+  R² Score: 0.9998
+  MAE: ₹5.30
+
+📊 Training On-Time Prediction Model (Classifier)...
+  Accuracy: 0.9778
+  F1 Score: 0.9848
+  MAE (vs 0/100 target): 3.43%
+
+✅ All models trained successfully!
+
+✓ Training completed in 4.20 seconds
+✓ Dataset: 25000 records
+✓ 5-fold CV On-Time: Acc = 0.9759 ± 0.0022, F1 = 0.9835 ± 0.0015
+✓ 5-fold CV Cost: R² = 0.9998 ± 0.0000, MAE = ₹5.40 ± ₹0.07
+
+============================================================
+MODULE 02: VENDOR SEGMENTATION
+============================================================
+✓ Loaded 25000 records
+
+✓ Calculated features for 9 vendors
+
+Vendor Statistics:
+                    avg_cost  avg_distance  delay_rate  avg_rating  volume  on_time_pct  cost_per_km  reliability_score
+delivery_partner                                                                                                       
+amazon logistics  868.150131    151.277167    0.272224    3.644412    2711    72.777573     5.738805          72.821837
+blue dart         863.021705    149.738706    0.269478    3.677627    2798    73.052180     5.763518          73.252323
+delhivery         848.109810    147.037904    0.248026    3.687724    2786    75.197416     5.767967          74.620244
+dhl               872.831125    152.084404    0.263383    3.685225    2802    73.661670     5.739123          73.678801
+ecom express      868.772186    151.066201    0.266348    3.674504    2722    73.365173     5.750937          73.415136
+ekart             869.966720    151.566476    0.274188    3.655480    2801    72.581221     5.739836          72.792574
+fedex             857.355640    148.778708    0.251597    3.698368    2818    74.840312     5.762623          74.491128
+shadowfax         868.340156    151.037756    0.273026    3.661550    2736    72.697368     5.749160          72.910819
+xpressbees        868.165768    150.974487    0.282732    3.608988    2826    71.726822     5.750414          71.907997
+
+✓ Clustered vendors into 4 groups
+
+✓ Clustering completed in 0.05 seconds
+✓ Silhouette Score: 0.4517
+
+============================================================
+MODULE 07: EARLY WARNING SYSTEM
+============================================================
+✓ Loaded 25000 records
+  Delay rate: 26.7%
+
+📊 Delay Prediction Model Performance:
+              precision    recall  f1-score   support
+
+     On-Time       0.99      0.98      0.98      3666
+     Delayed       0.94      0.97      0.96      1334
+
+    accuracy                           0.98      5000
+   macro avg       0.97      0.97      0.97      5000
+weighted avg       0.98      0.98      0.98      5000
+
+
+✓ Training completed in 2.01 seconds
+✓ Precision: 0.9412, Recall: 0.9715, F1: 0.9561
+✓ 5-fold CV (stratified): F1 = 0.9544 ± 0.0029, Precision = 0.9388 ± 0.0035, Recall = 0.9706 ± 0.0040
+
+============================================================
+EVALUATION COMPLETE
+============================================================
+
+✓ Results saved to: model_evaluation_results.json
+
+📊 SUMMARY:
+
+Module 01 - Predictive Analytics:
+  Cost Model: R²=0.9998, MAE=₹5.30
+  Carbon Formula: R²=1.0000, MAE=0 gCO₂
+  On-Time Model: Acc=0.9778, F1=0.9848, MAE=3.43%
+  Training Time: 4.20s
+
+Module 02 - Vendor Segmentation:
+  Silhouette Score: 0.4517
+  Clusters: 4, Vendors: 9
+  Clustering Time: 0.05s
+
+Module 07 - Early Warning System:
+  Precision: 0.9412
+  Recall: 0.9715
+  F1 Score: 0.9561
+  Training Time: 2.01s
+  → model_evaluation_results.json updated.
+
+[2/2] Running generate_figure_data.py ...
+Generating figure data in /Users/rashandhillon/pa-manual/anacodic-ai/_infra/profile/research/casp/casp-agent/scripts/../MDPI_Systems_Paper_v2/figdata
+✓ Loaded 25000 records
+  Delay rate: 26.7%
+
+📊 Delay Prediction Model Performance:
+              precision    recall  f1-score   support
+
+     On-Time       0.99      0.98      0.98      3666
+     Delayed       0.94      0.97      0.96      1334
+
+    accuracy                           0.98      5000
+   macro avg       0.97      0.97      0.97      5000
+weighted avg       0.98      0.98      0.98      5000
+
+  feature_importance_delay.csv
+✓ Loaded 25000 records
+
+📊 Training Cost Prediction Model...
+  R² Score: 0.9998
+  MAE: ₹5.30
+
+📊 Training On-Time Prediction Model (Classifier)...
+  Accuracy: 0.9778
+  F1 Score: 0.9848
+  MAE (vs 0/100 target): 3.43%
+
+✅ All models trained successfully!
+  feature_importance_ontime.csv
+✓ Loaded 25000 records
+
+📊 Training Cost Prediction Model...
+  R² Score: 0.9998
+  MAE: ₹5.30
+
+📊 Training On-Time Prediction Model (Classifier)...
+  Accuracy: 0.9778
+  F1 Score: 0.9848
+  MAE (vs 0/100 target): 3.43%
+
+✅ All models trained successfully!
+  forecast_failure_mae.csv
+  llm_country_carbon.csv, llm_country_pivot.csv
+✓ Loaded 25000 records
+  pareto_9types.csv
+✓ Loaded 25000 records
+
+✓ Calculated features for 9 vendors
+
+Vendor Statistics:
+                    avg_cost  avg_distance  delay_rate  avg_rating  volume  on_time_pct  cost_per_km  reliability_score
+delivery_partner                                                                                                       
+amazon logistics  868.150131    151.277167    0.272224    3.644412    2711    72.777573     5.738805          72.821837
+blue dart         863.021705    149.738706    0.269478    3.677627    2798    73.052180     5.763518          73.252323
+delhivery         848.109810    147.037904    0.248026    3.687724    2786    75.197416     5.767967          74.620244
+dhl               872.831125    152.084404    0.263383    3.685225    2802    73.661670     5.739123          73.678801
+ecom express      868.772186    151.066201    0.266348    3.674504    2722    73.365173     5.750937          73.415136
+ekart             869.966720    151.566476    0.274188    3.655480    2801    72.581221     5.739836          72.792574
+fedex             857.355640    148.778708    0.251597    3.698368    2818    74.840312     5.762623          74.491128
+shadowfax         868.340156    151.037756    0.273026    3.661550    2736    72.697368     5.749160          72.910819
+xpressbees        868.165768    150.974487    0.282732    3.608988    2826    71.726822     5.750414          71.907997
+
+✓ Clustered vendors into 4 groups
+  cluster_scatter.csv
+✓ Loaded 25000 records
+  casp_by_country.csv
+✓ Loaded 25000 records
+  Delay rate: 26.7%
+  early_warning_computed.csv
+  confusion_matrix.csv
+✓ Loaded 25000 records
+  Delay rate: 26.7%
+  delay_rate_by_package_type.csv
+Done.
+  → figdata/*.csv updated.
+
+============================================================
+Done. For case study JSON run: python run_casestudy_output.py
+============================================================

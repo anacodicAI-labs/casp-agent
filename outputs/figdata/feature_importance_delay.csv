@@ -1,0 +1,11 @@
+feature,importance
+delivery_rating,0.8215283456164052
+delivery_mode_express,0.11354739132354656
+delivery_mode_two day,0.01875526501745924
+delivery_mode_standard,0.014810311791368403
+delivery_mode_same day,0.01279829808468763
+distance_km,0.00993140656095405
+weather_condition_stormy,0.0036902389178050613
+weather_condition_rainy,0.002469744844731078
+weather_condition_foggy,0.0011055616647042727
+weather_condition_cold,0.0004276328874063725

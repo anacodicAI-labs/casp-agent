@@ -1,0 +1,10 @@
+package_type,delay_rate,n_delayed,n_total
+automobile parts,0.2619,732,2795
+clothing,0.2609,722,2767
+cosmetics,0.2704,742,2744
+documents,0.2717,762,2805
+electronics,0.2718,759,2792
+fragile items,0.2665,759,2848
+furniture,0.2476,680,2746
+groceries,0.2744,739,2693
+pharmacy,0.2754,774,2810

@@ -1,0 +1,222 @@
+{
+  "_metadata": {
+    "description": "Major Indian cities with logistics metadata (region, metro status, coordinates)",
+    "version": "1.0",
+    "last_updated": "2024",
+    "sources": [
+      "Google Maps Geocoding API",
+      "Indian Census data and administrative boundaries",
+      "Logistics industry geographic classifications"
+    ],
+    "_note": "City coordinates from Google Maps Geocoding API. Regional classifications and metro status based on Indian administrative boundaries and logistics industry standards."
+  },
+  "cities": {
+    "delhi": {
+      "name": "Delhi",
+      "code": "DEL",
+      "region": "north",
+      "is_metro": true,
+      "state": "Delhi",
+      "latitude": 28.6139,
+      "longitude": 77.2090
+    },
+    "noida": {
+      "name": "Noida",
+      "code": "NOI",
+      "region": "north",
+      "is_metro": true,
+      "state": "Uttar Pradesh",
+      "latitude": 28.5355,
+      "longitude": 77.3910
+    },
+    "gurgaon": {
+      "name": "Gurgaon",
+      "code": "GGN",
+      "region": "north",
+      "is_metro": true,
+      "state": "Haryana",
+      "latitude": 28.4595,
+      "longitude": 77.0266
+    },
+    "chandigarh": {
+      "name": "Chandigarh",
+      "code": "CHD",
+      "region": "north",
+      "is_metro": false,
+      "state": "Chandigarh",
+      "latitude": 30.7333,
+      "longitude": 76.7794
+    },
+    "lucknow": {
+      "name": "Lucknow",
+      "code": "LKO",
+      "region": "north",
+      "is_metro": false,
+      "state": "Uttar Pradesh",
+      "latitude": 26.8467,
+      "longitude": 80.9462
+    },
+    "jaipur": {
+      "name": "Jaipur",
+      "code": "JAI",
+      "region": "north",
+      "is_metro": false,
+      "state": "Rajasthan",
+      "latitude": 26.9124,
+      "longitude": 75.7873
+    },
+    "mumbai": {
+      "name": "Mumbai",
+      "code": "MUM",
+      "region": "west",
+      "is_metro": true,
+      "state": "Maharashtra",
+      "latitude": 19.0760,
+      "longitude": 72.8777
+    },
+    "pune": {
+      "name": "Pune",
+      "code": "PNQ",
+      "region": "west",
+      "is_metro": true,
+      "state": "Maharashtra",
+      "latitude": 18.5204,
+      "longitude": 73.8567
+    },
+    "ahmedabad": {
+      "name": "Ahmedabad",
+      "code": "AMD",
+      "region": "west",
+      "is_metro": true,
+      "state": "Gujarat",
+      "latitude": 23.0225,
+      "longitude": 72.5714
+    },
+    "surat": {
+      "name": "Surat",
+      "code": "STV",
+      "region": "west",
+      "is_metro": false,
+      "state": "Gujarat",
+      "latitude": 21.1702,
+      "longitude": 72.8311
+    },
+    "nagpur": {
+      "name": "Nagpur",
+      "code": "NAG",
+      "region": "central",
+      "is_metro": false,
+      "state": "Maharashtra",
+      "latitude": 21.1458,
+      "longitude": 79.0882
+    },
+    "bangalore": {
+      "name": "Bangalore",
+      "code": "BLR",
+      "region": "south",
+      "is_metro": true,
+      "state": "Karnataka",
+      "latitude": 12.9716,
+      "longitude": 77.5946
+    },
+    "chennai": {
+      "name": "Chennai",
+      "code": "MAA",
+      "region": "south",
+      "is_metro": true,
+      "state": "Tamil Nadu",
+      "latitude": 13.0827,
+      "longitude": 80.2707
+    },
+    "hyderabad": {
+      "name": "Hyderabad",
+      "code": "HYD",
+      "region": "south",
+      "is_metro": true,
+      "state": "Telangana",
+      "latitude": 17.3850,
+      "longitude": 78.4867
+    },
+    "kochi": {
+      "name": "Kochi",
+      "code": "COK",
+      "region": "south",
+      "is_metro": false,
+      "state": "Kerala",
+      "latitude": 9.9312,
+      "longitude": 76.2673
+    },
+    "coimbatore": {
+      "name": "Coimbatore",
+      "code": "CJB",
+      "region": "south",
+      "is_metro": false,
+      "state": "Tamil Nadu",
+      "latitude": 11.0168,
+      "longitude": 76.9558
+    },
+    "kolkata": {
+      "name": "Kolkata",
+      "code": "CCU",
+      "region": "east",
+      "is_metro": true,
+      "state": "West Bengal",
+      "latitude": 22.5726,
+      "longitude": 88.3639
+    },
+    "bhubaneswar": {
+      "name": "Bhubaneswar",
+      "code": "BBI",
+      "region": "east",
+      "is_metro": false,
+      "state": "Odisha",
+      "latitude": 20.2961,
+      "longitude": 85.8245
+    },
+    "patna": {
+      "name": "Patna",
+      "code": "PAT",
+      "region": "east",
+      "is_metro": false,
+      "state": "Bihar",
+      "latitude": 25.5941,
+      "longitude": 85.1376
+    },
+    "guwahati": {
+      "name": "Guwahati",
+      "code": "GAU",
+      "region": "east",
+      "is_metro": false,
+      "state": "Assam",
+      "latitude": 26.1445,
+      "longitude": 91.7362
+    },
+    "indore": {
+      "name": "Indore",
+      "code": "IDR",
+      "region": "central",
+      "is_metro": false,
+      "state": "Madhya Pradesh",
+      "latitude": 22.7196,
+      "longitude": 75.8577
+    },
+    "bhopal": {
+      "name": "Bhopal",
+      "code": "BHO",
+      "region": "central",
+      "is_metro": false,
+      "state": "Madhya Pradesh",
+      "latitude": 23.2599,
+      "longitude": 77.4126
+    },
+    "goa": {
+      "name": "Goa",
+      "code": "GOI",
+      "region": "west",
+      "is_metro": false,
+      "state": "Goa",
+      "latitude": 15.2993,
+      "longitude": 74.1240
+    }
+  }
+}
