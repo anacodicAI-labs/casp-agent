@@ -6,9 +6,14 @@ Multi-agent, tool-augmented supply chain optimization system implementing the Ca
 
 ---
 
-| Query | Agent Pipeline | Result |
-|:-----:|:--------------:|:------:|
-| ![Input](demo/1.png) | ![Pipeline](demo/2.png) | ![Output](demo/3.png) |
+### 1 — Describe your shipment
+![Input query UI](demo/1.png)
+
+### 2 — Agents reason in real time
+![Multi-agent pipeline view](demo/2.png)
+
+### 3 — Recommendation with CASP score
+![Result with carbon, cost, and risk](demo/3.png)
 
 ---
 
