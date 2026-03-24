@@ -2,12 +2,20 @@
 
 Multi-agent, tool-augmented supply chain optimization system implementing the Carbon-Aware Service Performance (CASP) framework.
 
+**[Live Demo →](https://anacodicai.com/casp/)**
+
+---
+
+| Query | Agent Pipeline | Result |
+|:-----:|:--------------:|:------:|
+| ![Input](demo/1.png) | ![Pipeline](demo/2.png) | ![Output](demo/3.png) |
+
+---
+
 Supports two execution modes:
 
 - **LLM orchestration mode**: Strands/Bedrock agents (`agents/`) calling structured `@tool` wrappers (`tools/`)
 - **Python pipeline mode**: deterministic orchestration through `services/` and ML modules
-
-Live demo: [anacodicai.com/casp](https://anacodicai.com/casp/)
 
 ---
 
